@@ -1,95 +1,317 @@
-a, body, #menu a {
-        color: #eee;
+/* make sticking a footer to the bottom possible */
+html,
+body,
+#pageWrapper {
+	height: 100%;
 }
 
+/* body */
 body {
-        background-color: black;
-        font-family: "trebuchet ms", verdana;
-        padding-left: 50%;
+	margin: 0;
+	background-color: #000;
+	color: #102020;
+	line-height: 1.6;
+	font-family: serif;
 }
 
-#wrapper {
-        width: 800px;
-        margin-left: -400px;
-}
-
-#main {
-        background-repeat: no-repeat;
-        min-height: 533px;
-}
-
-h1 {
-        font-size: 1.3em;
-}
-
-img.left {
-        float: left;
-        margin: 0.5em 0.5em 0.5em 0;
-}
-
-img.right {
-        float: right;
-        margin: 0.5em 0 0.5em 0.5em;
-}
-
-a img {
-	border: none; /* IE normalization */
-}
-
-h2 {
-        font-size: 1.4em;
-}
-
-p, h2, img {
-        padding: 0;
-        margin: 0 0 1em 0;
-}
-
-h2 {
-        margin-bottom: 0.5em;
-}
-
-#footer a {
+/* links -- style copied from MediaWiki */
+a {
 	text-decoration: none;
 }
-
-#footer a:hover {
-	color: #fff;
+a:link {
+	color: #3366BB;
+}
+a:visited {
+	color: #663366;
+}
+a:active {
+	color: #FAA700;
+}
+a:hover, a:focus {
 	text-decoration: underline;
 }
 
+a img {
+	/* IE normalization */
+	border: none;
+}
+
+/* everything of the standard width */
+.container {
+	margin: 0 auto;
+	max-width: 850px;
+}
+
+/* header */
+#header {
+	z-index: 1;
+	position: fixed;
+	background: url('{{ MEDIA_URL }}/base/header_img.jpg');
+	background-repeat: no-repeat;
+	background-position: center;
+	width: 100%;
+	height: 70px;
+}
+#header,
 #footer {
-        clear: both;
-        text-align: center;
+	margin: 0;
+	color: #b0b0b0;
+	background-color: #000;
+	font-family: sans-serif;
+	font-size: 16px;
+}
+#footer {
+	padding: 4px 0;
+	font-size: 14px;
+	box-shadow: 0px -1px 4px #a31e1b;
+}
+@media screen and (min-width: 50em) {
+	#header {
+		box-shadow: 0px 1px 4px #a31e1b;
+	}
+}
+#header > .container {
+	position: relative;
+	height: 100%;
+}
+#header #logo {
+	position: absolute;
+	bottom: 8px;
+	left: 20px;
 }
 
-address {
-	padding-left: 3em;
+/* navigator */
+#navigator {
+	position: absolute;
+	height: 42px;
+	margin: 0;
+	padding: 0;
+	font-variant: small-caps;
+	right: 10px;
+	bottom: 0px;
+	background-color: rgba(0, 0, 0, 0.75);
+}
+#navigator ul {
+	list-style: none;
+	margin: 0;
+}
+#navigator ul,
+#navigator a {
+	padding: 8px 6.4px;
+}
+#navigator li {
+	display: inline;
+}
+#navigator a {
+	margin: 0 8px;
+	border-bottom: solid 3px transparent;
+}
+#navigator a:link, #navigator a:visited {
+	color: #a0a0a0;
+	text-decoration: none;
+}
+#navigator a:hover {
+	border-bottom: solid 3px #a31e1b;
+	color: #f0f0f0;
+}
+#navigator a:active {
+	color: #f0f0f0;
+	text-decoration: underline;
+}
+#navigator a.current {
+	color: #f0f0f0;
+	font-weight: bold;
+}
+@media screen and (min-width: 50em) {
+	#navigator {
+		right: 10px;
+		bottom: 0px;
+	}
+}
+@media screen and (max-width: 50em) {
+	#navigator {
+		left: 0px;
+		right: 0px;
+		bottom: -42px;
+		box-shadow: 0px 1px 4px #a31e1b;
+	}
+	#navigator ul {
+		background-color: rgba(0, 0, 0, 0.90);
+	}
 }
 
-textarea.default, input.default {
-        color: gray;
+/* content */
+#content {
+	margin: 0 auto;
+	padding-top: 90px;
+	padding-bottom: 20px;
+	min-height: 300px;
+	min-height: calc(100% - 70px - 20px * 2 - 36px);
+	background-color: #f0f0f0;
+	background-image: url('/djmedia/base/uiltje.png');
+	background-repeat: no-repeat;
+	background-position: 100% 70px;
+	background-attachment: scroll;
+}
+@media screen and (max-width: 800px) {
+	#content {
+		top: 442px;
+	}
 }
 
-.error {
-        padding-top: 1em;
-        padding-left: 1em;
-        padding-bottom: 1em;
-        color: red;
+/* content */
+#content h1 {
+	color: #404040;
+	font-variant: small-caps;
+	font-family: sans-serif;
+	margin-bottom: 0;
+	padding: 4px 0;
+	margin: 0;
+}
+#content img {
+	padding: 4px;
+	border: solid 1px #aaa;
+	background-color: #f8f8f8;
+	box-shadow: 0px 0px 2px #a31e1b;
+	margin: 0.25em 0.5em;
+}
+#content hr {
+	background-color: #a31e1b;
+	height: 3px;
+	max-width: 5em;
+	border: none;
+	margin: 8px auto;
+}
+.right {
+	float: right;
+}
+.left {
+	float: left;
 }
 
-/* markdown classes */
-.md_h1 {
-        font-weight: bold;
+/* scroll-up button */
+#footer #scrollUp {
+	float: right;
 }
-.md_h2 {
-        font-style: italic;
+
+/* Variex font of the logo */
+@font-face {
+    font-family: Variex;
+    src: url("/djmedia/base/Variex.ttf");
 }
-.md_h3 {
-        font-weight: bold;
-        font-size: 0.9em;
+
+.email {
+	font-family: monospace;
 }
-.md_h4 {
-        font-style: italic;
-        font-size: 0.9em;
+
+/* suckerfish-menu */
+
+#menu {
+	text-align: right;
+	padding: 0;
+	margin: 0;
+	display: block;
+}
+
+#menu li { /* all levels */
+	list-style-type: none;
+	display: inline-block;
+	position: relative;
+	font-variant: small-caps;
+	font-family: sans-serif;
+	text-transform: lowercase;
+}
+#menu > li { /* only 1st level */
+	margin: 0 4px;
+	box-shadow: 0 -5px 2px 4px transparent; /* prepare for animation: animate only color */
+	background: transparent;
+}
+#menu > li:hover {
+	box-shadow: 0 -5px 2px 4px white;
+	background: white;
+}
+#menu > li > a,
+#menu > li > span {
+	display: block;
+	padding: 0 6px;
+}
+#menu li li { /* 2nd-level and up */
+	margin: 0;
+	display: block;
+}
+
+#menu a {
+	text-decoration: underline;
+}
+#menu a:hover {
+	text-decoration: none;
+}
+#menu a.current {
+	font-weight: bold;
+	text-decoration: none;
+}
+#menu a,
+#menu span {
+	display: block;
+}
+
+#menu li ul {
+	position: absolute;
+	background: white;
+	box-shadow: 0 0 2px 4px white;
+	padding-left: 6px;
+	width: 10em;
+	text-align: left;
+	margin-top: 2px; /* overlapping box-shadow */
+
+	opacity: 0;
+	left: -9999px;
+}
+#menu li:hover ul {
+	opacity: 1;
+	left: 0px;
+}
+
+/* normal fast transition */
+#menu > li {
+	transition: background 0.10s, box-shadow 0.10s;
+}
+#menu li ul {
+	transition: opacity 0.10s, left 0.0s 0.10s;
+}
+#menu li:hover ul { /* because left should be set immediately when fading in */
+	transition: opacity 0.10s, left 0.0s 0.00s;
+}
+
+/* when mouse leaves the menu */
+#menu:not(:hover) > li {
+	transition: background 0.10s 1.50s, box-shadow 0.10s 1.50s;
+}
+#menu:not(:hover) li ul {
+	transition: opacity 0.10s 1.50s, left 0s 1.60s;
+}
+
+/* when mouse enters another part of the menu */
+#menu:hover li:not(:hover) {
+	/* these properties are almost-transparent instead of completely transparent because this only works when the properties change, for some reason... */
+	box-shadow: 0 0 2px 4px rgba(255, 255, 255, 0.001);
+	background: rgba(255, 255, 255, 0.001);
+	transition: box-shadow 0.10s, background 0.10s;
+}
+#menu:hover li:not(:hover) ul {
+	opacity: 0.001;
+	left: -9998px;
+	transition: opacity 0.10s, left 0s 0.10s;
+}
+
+/* improve default sytles of text fields */
+input:not([type=submit]):not([type=file]),
+textarea {
+	border: solid 1px #b0b0b0;
+	padding: 2px;
+	color: #102020;
+}
+
+#loginWindow a {
+	color: #ddd;
 }

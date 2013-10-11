@@ -1,27 +1,32 @@
 {% extends "base/bare.html" %}
 
-{% block head %}
-{{ block.super }}
-<link href="{% url style-common %}"
-	rel="stylesheet" type="text/css" />
-<style type="text/css">
-        #body { background-image:
-                url({{ MEDIA_URL }}/base/bg.png); }
-</style>
-{% endblock %}
-
 {% block wrapper %}
-<div id="logo"></div>
+<div id="header">
+	<div class="container">
+		<div id="logo">
+			<a href="/"><img src="{{ MEDIA_URL }}/base/logo.png" alt="Karpe Noktem" style="width: 310px"/></a>
+		</div>
+		<div id="navigator" class="container">
+			<ul>
+				<li><a href="/agenda">agenda</a></li>
+				<li><a href="/watis">over</a></li>
+				<li><a href="https://www.karpenoktem.nl/fotos" target="_blank">foto's</a></li>
+				<li><a href="lidworden.html">lid worden</a></li>
+				<li><a href="contact.html">contact</a></li>
+				<li><a href="{% url smoelen-home %}" class="current" title="Inloggen voor leden"><img src="/djmedia/base/login.png" width="13" alt="inloggen"/> leden</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
 {{ block.super }}
 {% endblock %}
 
 {% block main %}
 <ul id="menu">
 	{% block menu %}
-	<li><a href="/">Terug</a></li>
-        {% if user.is_authenticated %}
+	{% if user.is_authenticated %}
 	<li><a href="{% url logout %}">Uitloggen</a></li>
-        {% endif %}{# user.is_authenticated #}
+	{% endif %}{# user.is_authenticated #}
 	{% endblock %}
 </ul>
 {{ block.super }}
