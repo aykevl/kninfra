@@ -274,21 +274,21 @@ a img {
 
 /* normal fast transition */
 #menu > li {
-	transition: background 0.10s, box-shadow 0.10s;
+	transition: background 0.10s 0.02s, box-shadow 0.10s 0.02s;
 }
-#menu li ul {
-	transition: opacity 0.10s, left 0.0s 0.10s;
+#menu li ul { /* fade out */
+	transition: opacity 0.10s 0.02s, left 0.0s 0.12s;
 }
-#menu li:hover ul { /* because left should be set immediately when fading in */
-	transition: opacity 0.10s, left 0.0s 0.00s;
+#menu li:hover ul { /* fade in: because left should be set immediately */
+	transition: opacity 0.10s 0.02s, left 0.0s 0.02s;
 }
 
 /* when mouse leaves the menu */
 #menu:not(:hover) > li {
-	transition: background 0.10s 1.50s, box-shadow 0.10s 1.50s;
+	transition: background 0.10s 1.52s, box-shadow 0.10s 1.52s;
 }
 #menu:not(:hover) li ul {
-	transition: opacity 0.10s 1.50s, left 0s 1.60s;
+	transition: opacity 0.10s 1.52s, left 0s 1.62s;
 }
 
 /* when mouse enters another part of the menu */
@@ -296,12 +296,12 @@ a img {
 	/* these properties are almost-transparent instead of completely transparent because this only works when the properties change, for some reason... */
 	box-shadow: 0 0 2px 4px rgba(255, 255, 255, 0.001);
 	background: rgba(255, 255, 255, 0.001);
-	transition: box-shadow 0.10s, background 0.10s;
+	transition: box-shadow 0.10s 0.02s, background 0.10s 0.02s;
 }
 #menu:hover li:not(:hover) ul {
 	opacity: 0.001;
 	left: -9998px;
-	transition: opacity 0.10s, left 0s 0.10s;
+	transition: opacity 0.10s 0.02s, left 0s 0.12s;
 }
 
 /* improve default sytles of text fields */
