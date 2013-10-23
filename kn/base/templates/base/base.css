@@ -144,8 +144,7 @@ a img {
 /* content */
 #content {
 	margin: 0 auto;
-	padding-top: 90px;
-	padding-bottom: 20px;
+	padding: 90px 0 20px 0;
 	min-height: 300px;
 	min-height: calc(100% - 70px - 20px * 2 - 36px);
 	background-color: #f0f0f0;
@@ -156,12 +155,13 @@ a img {
 }
 @media screen and (max-width: 800px) {
 	#content {
+		padding-top: 30px;
 		top: 442px;
 	}
 }
 
 /* content */
-#content h1 {
+#content h1, #content h2 {
 	color: #404040;
 	font-variant: small-caps;
 	font-family: sans-serif;
@@ -243,6 +243,7 @@ a img {
 
 #menu a {
 	text-decoration: underline;
+	color: #000;
 }
 #menu a:hover {
 	text-decoration: none;
