@@ -89,7 +89,8 @@ a img {
 	font-variant: small-caps;
 	right: 10px;
 	bottom: 0px;
-	background-color: rgba(0, 0, 0, 0.75);
+	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQI12NgYGDYDwAAxADAwDGXeQAAAABJRU5ErkJggg=='); /* IE8 */
+	background: rgba(0, 0, 0, 0.75);
 }
 #navigator ul {
 	list-style: none;
@@ -262,7 +263,6 @@ a img {
 	padding-left: 6px;
 	width: 10em;
 	text-align: left;
-	margin-top: 2px; /* overlapping box-shadow */
 
 	opacity: 0;
 	left: -9999px;
