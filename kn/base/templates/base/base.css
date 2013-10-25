@@ -195,12 +195,6 @@ a img {
 	float: right;
 }
 
-/* Variex font of the logo */
-@font-face {
-    font-family: Variex;
-    src: url("/djmedia/base/Variex.ttf");
-}
-
 .email {
 	font-family: monospace;
 }
