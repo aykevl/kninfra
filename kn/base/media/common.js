@@ -152,6 +152,10 @@ $(document).ready(function() {
             event.stopPropagation();
         });
     }
+
+    if (!window.SVGSVGElement) {
+        $(document.documentElement).addClass('no-svg');
+    }
 });
 
 // Implement rot13 for email obscurification
