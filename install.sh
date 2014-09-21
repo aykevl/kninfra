@@ -74,6 +74,10 @@ fi
 if ! grep -Eq '^interinfra:.*:.*:.*\binfra\b' /etc/group; then
 	adduser infra interinfra
 fi
+if ! grep -Eq '^kn:' /etc/group; then
+	addgroup kn
+fi
+mkdir -p /groups
 
 
 
