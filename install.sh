@@ -110,7 +110,16 @@ chown -R infra:infra /home/infra
 
 
 echo -e '\n*** configuring lighttpd...'
-mkdir -p /srv/default
+
+mkdir -p /srv/karpenoktem.nl
+if [ ! -L /srv/default ]; then
+	ln -s karpenoktem.nl /srv/default
+fi
+
+if [ ! -f /etc/lighttpd/conf-enabled/*-simple-vhost.conf ]; then
+	lighttpd-enable-mod simple-vhost
+fi
+
 sed -i 's/# *"mod_rewrite",/\t"mod_rewrite",/g' /etc/lighttpd/lighttpd.conf
 sed -i 's:\(server\.document-root.*= "\).*":\1/srv/default":g'    /etc/lighttpd/lighttpd.conf
 if [ ! -f /etc/lighttpd/rewrites.conf ]; then
