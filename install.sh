@@ -36,7 +36,7 @@ mkdir $tmpdir
 
 
 echo -e '\n*** installing required packages...'
-apt-get install -y lighttpd php5-cgi python-django msgpack-python python-setuptools python-pyparsing python-markdown python-flup python-pymongo python-mysqldb python-imaging mongodb mailman
+apt-get install -y lighttpd php5-cgi python-django msgpack-python python-setuptools python-pyparsing python-markdown python-flup python-pymongo python-mysqldb python-imaging mongodb mailman postfix
 
 mkdir -p /home/infra/scm
 mkdir -p /home/infra/py
@@ -74,10 +74,14 @@ fi
 if ! grep -Eq '^interinfra:.*:.*:.*\binfra\b' /etc/group; then
 	adduser infra interinfra
 fi
+if ! grep -Eq '^list:.*:.*:.*\binfra\b' /etc/group; then
+	adduser infra list
+fi
 if ! grep -Eq '^kn:' /etc/group; then
 	addgroup kn
 fi
 mkdir -p /groups
+mkdir -p /etc/postfix/virtual
 
 
 
