@@ -1,6 +1,8 @@
 from glob import glob
 import os.path
 from os.path import basename
+from email.utils import formatdate
+import time
 
 import MySQLdb
 import Image
@@ -39,9 +41,20 @@ def cache(request, cache, path):
     else:
         f = o
     f.ensure_cached(cache)
-    resp = HttpResponse(FileWrapper(open(f.get_cache_path(cache))),
-                            mimetype=f.get_cache_mimetype(cache))
-    resp['Content-Length'] = os.path.getsize(f.get_cache_path(cache))
+    resp = HttpResponse(mimetype=f.get_cache_mimetype(cache))
+    # Note: X-Sendfile needs to be enabled separately in Lighttpd.
+    # See http://redmine.lighttpd.net/projects/1/wiki/X-LIGHTTPD-send-file
+    path = f.get_cache_path(cache)
+    resp['X-Sendfile'] = path
+    st = os.stat(path)
+    resp['Content-Length'] = st.st_size
+    resp['Last-Modified'] = formatdate(st.st_mtime)
+    # TODO: If-Modified-Since isn't implemented by Lighttpd so we need to
+    # support it.
+    # TODO: Range-requests need to be implemented for video support, as
+    # lighttpd doesn't implement it.
+    # See the PHP example here:
+    # http://redmine.lighttpd.net/projects/1/wiki/Docs_ModFastCGI#X-Sendfile
     return resp
 
 @login_required
