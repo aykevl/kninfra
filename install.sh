@@ -106,6 +106,7 @@ if [ ! -f /var/lib/mongodb/kn.0 ]; then
 fi
 if [ ! -f /home/infra/repo/kn/settings.py ]; then
 	cp /home/infra/repo/kn/settings.example.py /home/infra/repo/kn/settings.py
+	echo 'WARNING: edit /home/infra/repo/kn/settings.py with your settings'
 fi
 
 
