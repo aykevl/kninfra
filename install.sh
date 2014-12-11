@@ -94,11 +94,6 @@ mkdir -p /etc/postfix/virtual
 
 
 echo -e '\n*** configuring kninfra...'
-mkdir -p /home/infra/media
-ln -fs ../repo/kn/base/media/        /home/infra/media/base
-ln -fs ../repo/kn/leden/media/       /home/infra/media/leden
-ln -fs ../repo/kn/reglementen/media/ /home/infra/media/reglementen
-ln -fs ../repo/kn/static/media/      /home/infra/media/static
 mkdir -p /home/infra/storage
 ln -fs ../media/ /home/infra/storage/media
 
