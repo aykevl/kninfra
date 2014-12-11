@@ -121,14 +121,17 @@ chown -R infra:infra /home/infra
 
 echo -e '\n*** configuring lighttpd...'
 
-mkdir -p /srv/karpenoktem.nl
-if [ ! -L /srv/default ]; then
-	ln -s karpenoktem.nl /srv/default
-fi
-
 if [ ! -f /etc/lighttpd/conf-enabled/*-simple-vhost.conf ]; then
 	lighttpd-enable-mod simple-vhost
 fi
+
+mkdir -p /srv/karpenoktem.nl/htdocs
+# You may want to make /srv/default be a link to /srv/karpenoktem.nl,
+# so that it won't serve a default page when not using one of the hosts below.
+ln -sfT karpenoktem.nl /srv/www.karpenoktem.nl
+for host in {www.,dev.,}{karpenoktem.com,kn.cx}; do
+    ln -sfT karpenoktem.nl /srv/$host
+done
 
 sed -i 's/# *"mod_rewrite",/\t"mod_rewrite",/g' /etc/lighttpd/lighttpd.conf
 sed -i 's:\(server\.document-root.*= "\).*":\1/srv/default":g'    /etc/lighttpd/lighttpd.conf
