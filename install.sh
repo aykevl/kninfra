@@ -36,7 +36,13 @@ mkdir $tmpdir
 
 
 echo -e '\n*** installing required packages...'
-apt-get install -y lighttpd php5-cgi python-django msgpack-python python-setuptools python-pyparsing python-markdown python-flup python-pymongo python-mysqldb python-imaging mongodb mailman postfix
+apt-get install -y lighttpd php5-cgi msgpack-python python-setuptools python-pyparsing python-markdown python-flup python-pymongo python-mysqldb python-imaging python-pip mongodb mailman postfix
+
+# Don't try to --upgrade, I've seen that fail often in Wheezy.
+# Just install it if it isn't installed already.
+if [ ! -d /usr/local/lib/python2.7/dist-packages/django/ ]; then
+	pip install django==1.4
+fi
 
 mkdir -p /home/infra/scm
 mkdir -p /home/infra/py
