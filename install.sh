@@ -36,7 +36,7 @@ mkdir $tmpdir
 
 
 echo -e '\n*** installing required packages...'
-apt-get install -y lighttpd php5-cgi msgpack-python python-setuptools python-pyparsing python-markdown python-flup python-pymongo python-mysqldb python-imaging python-pip mongodb mailman postfix
+apt-get install -y lighttpd php5-cgi msgpack-python python-setuptools python-pyparsing python-markdown python-flup python-pymongo python-mysqldb python-imaging python-pip mongodb mailman postfix samba
 
 # Don't try to --upgrade, I've seen that fail often in Wheezy.
 # Just install it if it isn't installed already.
