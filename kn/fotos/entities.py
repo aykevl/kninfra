@@ -62,7 +62,7 @@ class FotoEntity(SONWrapper):
     name = son_property(('name',))
     path = son_property(('path',))
     _type = son_property(('type',))
-    caches = son_property(('caches',), ())
+    caches = son_property(('caches',), {})
     title = son_property(('title',))
 
     description = son_property(('description',))
@@ -119,7 +119,7 @@ class FotoEntity(SONWrapper):
                           {'$pull': {'cacheLocks': cache}})
 
     def get_cache_meta(self, cache):
-        return self._data.get('cacheMeta', {}).get(cache, {})
+        return self._data.get('caches', {}).get(cache, {})
 
     def get_cache_path(self, cache):
         if cache == 'full':
@@ -153,14 +153,10 @@ class FotoEntity(SONWrapper):
             # .save() might overwrite other changes. (Like other caches.)
             # Thus we perform the change manually.
             if not 'caches' in self._data:
-                self._data['caches'] = []
-            if not 'cacheMeta' in self._data:
-                self._data['cacheMeta'] = {}
-            self._data['cacheMeta'][cache] = meta
-            self._data['caches'].append(cache)
+                self._data['caches'] = {}
+            self._data['caches'][cache] = meta
             fcol.update({'_id': self._id},
-                        {'$addToSet': {'caches': cache},
-                         '$set': {'cacheMeta.'+cache: meta}})
+                        {'$set': {'caches.'+cache: meta}})
         finally:
             self.unlock_cache(cache)
         return True
