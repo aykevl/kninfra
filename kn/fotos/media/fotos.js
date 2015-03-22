@@ -291,6 +291,8 @@
     if (this.foto) {
       url += '#' + this.foto.name;
     }
+    if (replace && location.pathname+location.hash === url)
+      return;
     if (!('pushState' in history)) {
       // Downwards compatibility with old browsers, primarily IE9.
       location.href = url;
@@ -362,11 +364,15 @@
     foto = foto || null;
     this.foto = foto;
     if (!foto) {
-      this.apply_url(false);
+      if (this.get_hash() !== '' && 'replaceState' in history) {
+        history.back();
+      } else {
+        this.apply_url(true);
+      }
       return;
     }
     if (this.get_hash() != foto.name) {
-      this.apply_url(false);
+      this.apply_url(true);
     }
     $('html').addClass('noscroll');
     var frame = $('.foto-frame.template').clone().removeClass('template');
