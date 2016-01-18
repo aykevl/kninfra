@@ -48,6 +48,8 @@ def entity(d):
     return TYPE_MAP[d['type']](d)
 
 def by_id(the_id):
+    if the_id is None:
+        return None
     return entity(fcol.find_one({'_id': _id(the_id)}))
 
 def by_oldId(_type, oldId):
@@ -69,6 +71,15 @@ def is_admin(user):
     if user is None:
         return False
     return bool(user.cached_groups_names & frozenset(('fotocie', 'webcie')))
+
+def required_visibility(user):
+    if user is None:
+        return frozenset(('world',))
+    if is_admin(user):
+        return frozenset(('leden', 'world', 'hidden'))
+    if 'leden' in user.cached_groups_names:
+        return frozenset(('leden', 'world'))
+    return frozenset(('world',))
 
 def actual_visibility(visibility):
     actual = frozenset(visibility)
@@ -104,6 +115,7 @@ class FotoEntity(SONWrapper):
     rotation = son_property(('rotation',))
     size = son_property(('size',))
     _search_text = son_property(('search_text',))
+    _album_thumb = son_property(('albumThumbnail',))
 
     visibility = son_property(('visibility',))
     _lost = son_property(('lost',))
@@ -113,14 +125,12 @@ class FotoEntity(SONWrapper):
     def is_root(self):
         return self.path is None
 
-    def required_visibility(self, user):
-        if user is None:
-            return frozenset(('world',))
-        if is_admin(user):
-            return frozenset(('leden', 'world', 'hidden'))
-        if 'leden' in user.cached_groups_names:
-            return frozenset(('leden', 'world'))
-        return frozenset(('world',))
+    @property
+    def album_thumb(self):
+        return by_id(self._album_thumb)
+
+    def set_album_thumb(self, thumb):
+        this._album_thumb = _id(thumb)
 
     def _update_effective_visibility(self, parent, save=True, recursive=False):
         '''
@@ -159,7 +169,7 @@ class FotoEntity(SONWrapper):
         return True
 
     def may_view(self, user):
-        return bool(self.required_visibility(user)
+        return bool(required_visibility(user)
                         & frozenset(self.effective_visibility))
 
     @permalink
@@ -372,14 +382,14 @@ class FotoAlbum(FotoEntity):
         super(FotoAlbum, self).__init__(data)
 
     def list(self, user):
-        required_visibility = self.required_visibility(user)
+        rvis = required_visibility(user)
         albums = map(entity, fcol.find({'path': self.full_path,
                            'type': 'album',
-                           'effectiveVisibility': {'$in': tuple(required_visibility)}},
+                           'effectiveVisibility': {'$in': tuple(rvis)}},
                            ).sort([('date', -1), ('name', 1)]))
         fotos = map(entity, fcol.find({'path': self.full_path,
                            'type': {'$ne': 'album'},
-                           'effectiveVisibility': {'$in': tuple(required_visibility)}},
+                           'effectiveVisibility': {'$in': tuple(rvis)}},
                            ).sort([('date', 1), ('name', 1)]))
 
         return albums+fotos
@@ -390,16 +400,19 @@ class FotoAlbum(FotoEntity):
         '''
         return map(entity, fcol.find({'path': self.full_path}).sort('name', 1))
 
-    def get_random_foto_for(self, user):
+    def get_album_thumb_for(self, user):
+        rvis = required_visibility(user)
+        if self.album_thumb:
+            if set(self.album_thumb.effective_visibility) & rvis:
+                return self.album_thumb
         r = random.random()
-        required_visibility = self.required_visibility(user)
         while True:
             f = entity(fcol.find_one(
                     {'random': {'$lt': r},
                      'path': {'$regex': re.compile(
                                 "^%s(/|$)" % re.escape(self.full_path))},
                      'type': 'foto',
-                     'effectiveVisibility': {'$in': tuple(required_visibility)}},
+                     'effectiveVisibility': {'$in': tuple(rvis)}},
                         sort=[('random',-1)]))
             if f is not None:
                 return f
@@ -407,10 +420,21 @@ class FotoAlbum(FotoEntity):
                 return None
             r = 1
 
+    def set_album_thumb(self, foto, save=True):
+        if foto.effective_visibility != self.effective_visibility:
+            # Foto visibility should at least be visible when the album is
+            # visible. But a foto within it can never be more visible, so it
+            # *has* to be equal.
+            raise ValueError('Provide a Foto that has the same visibility as the album')
+        self._album_thumb = _id(foto)
+
+        if save:
+            self.save()
+
     def search(self, q, user):
-        required_visibility = self.required_visibility(user)
+        rvis = required_visibility(user)
         query_filter = {'path': self.mongo_path_prefix,
-                        'effectiveVisibility': {'$in': tuple(required_visibility)}}
+                        'effectiveVisibility': {'$in': tuple(rvis)}}
         if q.startswith('album:'):
             album = q[len('album:'):]
             query_filter['type'] = 'album'

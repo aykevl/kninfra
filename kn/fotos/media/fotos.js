@@ -60,7 +60,8 @@
     this.search_results = null;
     this.path = null;
     this.foto = null;
-    this.sidebar = false;
+    this.album_thumbs_expanded = false;
+    this.sidebar = true;
     this.saving_status = 0; /* enum: none, saved, saving, saving+queue */
     this.fotos = {};
     this.parents = {};
@@ -96,7 +97,7 @@
     // update album edit box
     var field_title = $('#album-title');
     if (field_title) {
-      field_title.val(this.parents[this.path]);
+      field_title.val(this.parents[this.path].title);
       var parts = this.path.split('/');
       field_title.attr('placeholder', parts[parts.length-1]);
     }
@@ -157,7 +158,7 @@
       }
 
       var a = $('<a></a>').text(
-          this.parents[cur] || component).appendTo(breadcrumbs);
+          this.parents[cur].title || component).appendTo(breadcrumbs);
       var p = cur;
       a.attr('href', fotos_root+encodePath(cur))
        .click(function(e) {
@@ -289,7 +290,7 @@
       prev = c;
 
       if (c.type == 'album' && !(c.path in this.parents)) {
-        this.parents[c.path] = c.title;
+        this.parents[c.path] = {title: c.title};
       }
     }.bind(this));
 
@@ -395,6 +396,7 @@
       $('html').removeClass('noscroll');
       delete this.foto.newTags;
     }
+    this.album_thumbs_expanded = false;
     foto = foto || null;
     this.foto = foto;
     if (!foto) {
@@ -470,6 +472,15 @@
           this.rotate(90);
           return false;
         }.bind(this));
+    $('a.album-thumb', sidebar)
+        .click(function(e) {
+          e.preventDefault();
+          this.expand_album_thumbs();
+          return false;
+        }.bind(this));
+
+    // DEBUG
+    this.expand_album_thumbs();
 
     $('#foto').show();
   };
@@ -609,6 +620,58 @@
     }
     this.foto.rotation = mod(this.foto.rotation + degrees, 360);
     this.save_metadata();
+  };
+
+  KNF.prototype.expand_album_thumbs = function() {
+    if (this.album_thumbs_expanded) {
+      return;
+    }
+    this.album_thumbs_expanded = true;
+    $('#foto a.album-thumb .symbol').text('▼');
+    this.refresh_album_thumbs_list();
+  };
+
+  KNF.prototype.refresh_album_thumbs_list = function() {
+    console.log(this.parents);
+    var list = $('#foto ul.album-thumb');
+    list.empty();
+    var parts = this.path.split('/');
+    var curpath = '';
+    // This does not include the root.
+    for (var i=0; i<parts.length; i++) {
+      if (curpath) curpath += '/';
+      curpath += parts[i];
+
+      var li = $('<li><span></span><button>Instellen</button></li>');
+      $('span', li).text((this.parents[curpath].title || parts[i]) + ' ');
+      if (this.parents[curpath].thumb == this.foto.path) {
+        $('button', li).attr('disabled', true);
+      }
+      list.append(li);
+
+      (function(curpath) {
+        $('button', li).click(function() {
+          this.set_album_foto(this.foto, curpath);
+          return false;
+        }.bind(this));
+      }.bind(this))(curpath);
+    }
+  }
+
+  KNF.prototype.set_album_foto = function(foto, path) {
+    this.api({action: 'set-album-thumb',
+              path: path,
+              thumb: foto.path},
+      function(data) {
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+        // Ok!
+        // TODO update thumb of album and reload
+        this.parents[path].thumb = foto.path;
+        this.refresh_album_thumbs_list();
+      }.bind(this));
   };
 
   KNF.prototype.save_metadata = function () {
@@ -757,7 +820,7 @@
         field_visibility.prop('disabled', false);
 
         // update/clear cache
-        this.parents[path] = title;
+        this.parents[path].extend({title: title});
         if (path !== '') {
           var parts = path.split('/');
           delete this.fotos[parts.slice(0, parts.length-1).join('/')];

@@ -47,6 +47,10 @@ img#album-edit-toggle {
     right: -5px;
 }
 
+#album-thumb-remove-button {
+    float: right;
+}
+
 p.error {
     clear: both;
     margin: 1em 5px;
@@ -196,6 +200,24 @@ html.foto-sidebar #foto .sidebar {
 #foto .sidebar input {
     width: 100%;
     box-sizing: border-box;
+}
+#foto ul.album-thumb {
+    padding-left: 0;
+    margin-top: 0;
+}
+#foto ul.album-thumb li {
+    list-style-type: none;
+    display: flex;
+    white-space: nowrap;
+    min-width: 0;
+}
+#foto ul.album-thumb span {
+    flex-grow: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#foto ul.album-thumb button {
 }
 #foto .rotation a {
     display: inline-block;

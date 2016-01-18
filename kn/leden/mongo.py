@@ -20,7 +20,7 @@ def _id(obj):
         return ObjectId(obj)
     if hasattr(obj, '_id'):
         return obj._id
-    raise ValueError
+    raise ValueError('Cannot make ID out of object ' + str(obj))
 
 class SONWrapper(object):
     def __init__(self, data, collection, parent=None, detect_race=False):

@@ -14,11 +14,17 @@ def view(request):
 def no_such_action(data, request):
     return {'error': 'No such action'}
 
-def album_parents_json(album):
+def album_parents_json(album, user):
     json_parents = {}
     current_album = album
     while current_album is not None:
-        json_parents[current_album.full_path] = current_album.title
+        o = {
+            'title': current_album.title,
+        }
+        if fEs.is_admin(user):
+            thumb = current_album.album_thumb
+            o['thumb'] = thumb.full_path if thumb is not None else None
+        json_parents[current_album.full_path] = o
         current_album = current_album.get_parent()
 
     return json_parents
@@ -30,7 +36,7 @@ def album_json(album, user):
     children, people = entities_json(album.list(user), user)
 
     return {'children': children,
-            'parents': album_parents_json(album),
+            'parents': album_parents_json(album, user),
             'visibility': album.visibility[0],
             'people': people}
 
@@ -57,7 +63,7 @@ def entities_json(children, user):
             entry['largeSize'] = child.get_cache_size('large')
             entry['thumbnailSize'] = child.get_cache_size('thumb')
         elif child._type == 'album':
-            album_foto = child.get_random_foto_for(user)
+            album_foto = child.get_album_thumb_for(user)
             if album_foto is not None:
                 entry['thumbnailSize'] = album_foto.get_cache_size('thumb')
                 entry['thumbnailPath'] = album_foto.full_path
@@ -160,6 +166,30 @@ def _set_metadata(data, request):
     entity.update_visibility([visibility])
     return result
 
+def _set_album_thumb(data, request):
+    user = request.user if request.user.is_authenticated() else None
+    if not fEs.is_admin(user):
+        raise PermissionDenied
+
+    entity = entity_from_request(data)
+    if isinstance(entity, basestring):
+        return {'error': entity}
+
+    if 'thumb' not in data:
+        return {'error': 'missing thumb attribute'}
+    if not isinstance(data['thumb'], basestring):
+        return {'error': 'thumb must be a string'}
+
+    thumb_path = data['thumb']
+    if thumb_path:
+        thumb = fEs.by_path(thumb_path)
+    else:
+        thumb = None
+
+    entity.set_album_thumb(thumb)
+
+    return {'ok': True}
+
 def _search(data, request):
     album = entity_from_request(data)
     if isinstance(album, basestring):
@@ -184,6 +214,7 @@ def _search(data, request):
 ACTION_HANDLER_MAP = {
         'list': _list,
         'set-metadata': _set_metadata,
+        'set-album-thumb': _set_album_thumb,
         'search': _search,
         None: no_such_action,
         }

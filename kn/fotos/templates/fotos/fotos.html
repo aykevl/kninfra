@@ -65,6 +65,9 @@ if ('srcset' in (new Image())) {
     <input id="album-title" type="text" name="album-title" title="Album titel"
       oninput="$('#album-edit-button').prop('disabled', false)"/>
     <button id="album-edit-button" disabled>Ok</button>
+    <br/>
+    <span id="album-thumb-remove-text"></span>
+    <button id="album-thumb-remove-button">Verwijder</button>
   </form>
 {% endif %}
 </div>
@@ -95,6 +98,8 @@ if ('srcset' in (new Image())) {
           <option value="leden">Alleen leden</option>
           <option value="hidden">Fototaggers</option>
         </select>
+        <a class="album-thumb" href>Instellen als albumfoto: <span class="symbol">◀</class></a>
+        <ul class="album-thumb"></ul>
         <div class="rotation">
           <a class="rotate-left" href>
             <img src="{{ MEDIA_URL }}fotos/rotate-left.svg" width="24" height="24"/>
